@@ -62,8 +62,8 @@ const newsService = (function () {
   const apiUrl = 'https://newsapi.org/v2';
 
   return {
-    topHeadlines(country = 'ua', cb) {
-      http.get(`${apiUrl}/top-headlines?country=${country}&category=technology&apiKey=${apiKey}`, cb)
+    topHeadlines(country = 'ua', category, cb) {
+      http.get(`${apiUrl}/top-headlines?country=${country}&category=${category}&apiKey=${apiKey}`, cb)
     },
     everything(query, cb) {
       http.get(`${apiUrl}/everything?q=${query}&apiKey=${apiKey}`, cb)
@@ -74,6 +74,7 @@ const newsService = (function () {
 // Elements
 const form = document.forms['newsControls'];
 const countrySelect = form.elements['country'];
+const categorySelect = form.elements['category'];
 const searchInput = form.elements['search'];
 
 form.addEventListener('submit', (e) => {
@@ -92,10 +93,11 @@ function loadNews() {
   showLoader();
 
   const country = countrySelect.value;
+  const category = categorySelect.value;
   const searchText = searchInput.value;
-
+  console.log(category)
   if (!searchText) {
-    newsService.topHeadlines(country, onGetResponse);
+    newsService.topHeadlines(country, category, onGetResponse);
   } else {
     newsService.everything(searchText, onGetResponse);
   }
@@ -133,7 +135,7 @@ function renderNews(news) {
 }
 
 // News item template function
-function newsTemplate({urlToImage, title, url, description}) {
+function newsTemplate({urlToImage = 'https://www.gizmohnews.com/assets/images/news.png', title, url, description}) {
   return `
     <div class="col s12">
         <div class="card">
